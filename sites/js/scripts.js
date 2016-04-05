@@ -34,9 +34,14 @@ function muestra_buenos() {
 
   if (valor === ""){
     return true;
-  } else if  (!isFinite(valor)) {
+    // Si está vacío no lo damos como error, ya que 
+    // se convertirá a cero
+  } else if  (valor === "Infinity") {
+    // Si es infinito no lo damos como error, ya que
+    // se puede operar con números infinitos
     return true;
   } else if (!$.isNumeric(valor)) {
+    // Si es un valor NO numérico, informamos del error
     $.jAlert({
       'title': '¡Error en datos!',
       'content': '"' + valor + '" no es un número correcto',
