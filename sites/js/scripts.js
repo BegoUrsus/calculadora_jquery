@@ -196,6 +196,7 @@ $(function() {
         });
       }
       if (operacion === "b_producto") {
+		total = 1;
         $.each(array, function(){
           total*=parseFloat(this) || 0;
         });
