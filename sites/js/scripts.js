@@ -9,18 +9,48 @@ function resetea_acumulado() {
 }
 
 function muestra_memoria() {
-  if (mem_valor != 0) {
-    $("#memoria_simbolo").html("M");
-    $("#memoria_valor").html(mem_valor);
-  } else {
+  if (mem_valor == 0) {
     $("#memoria_simbolo").html("");
     $("#memoria_valor").html("");
+  } else {
+    $("#memoria_simbolo").html("M");
+    $("#memoria_valor").html(mem_valor);
   }
-
 }
+
+function muestra_buenos() {
+  var fecha = new Date();
+  var msj;
+
+  if      (fecha.getHours() < 7)  { msj = "Buenas noches";}
+  else if (fecha.getHours() < 12) { msj = "Buenos días";}
+  else if (fecha.getHours() < 21) { msj = "Buenas tardes";}
+  else                            { msj = "Buenas noches";}
+
+  $("#buenos").html(msj);
+ }
+
+ function comprueba_numero(valor) {
+
+  if (!$.isNumeric(valor)) {
+    $.jAlert({
+      'title': '¡Error en datos!',
+      'content': '"' + valor + '" no es un número correcto',
+      'theme': 'default',
+      'showAnimation': 'false',
+      'hideAnimation': 'false',
+      'btns': { 'text': 'Aceptar' }
+    });
+    return false;
+  } else  {
+    return true;
+  }
+ }
+
 
 $(function() {
 
+  muestra_buenos();
   muestra_memoria();
   
 
@@ -50,9 +80,8 @@ $(function() {
     function() {
       var lcd = $("#lcd");
       var operacion = $(this).attr('id');
-      acc_valor = +lcd.val();
-      // Si el acumlado es distinto de cero, mostramos el resultado
-      if (acc_valor != 0) {
+      if (comprueba_numero(lcd.val())) {
+        acc_valor = +lcd.val();
         acc_op = operacion;
         $("#acumulado").html(acc_valor);
         if (acc_op === "b_suma")
@@ -65,40 +94,38 @@ $(function() {
           $("#operacion").html("/");
         if (acc_op === "b_eleva")
           $("#operacion").html("^");
-      } else {
-        resetea_acumulado();
+        lcd.val("");
       }
-      lcd.val("");
     });
 
   /*Si pulsamos una tecla de calcular, realizamos la función que le corresponda
   según el operador y el valor acumulado que habíamos almacenado con las
   teclas de operación binarias. Resteamos lo acumulado*/
-  $(".resultado").on("click", 
+  $(".calcular").on("click", 
     function() {
       var lcd = $("#lcd");
+      if (comprueba_numero(lcd.val())) {
+        if (acc_op === "b_suma") {
+          lcd.val(+acc_valor + +lcd.val())
+        }
 
-      if (acc_op === "b_suma") {
-        lcd.val(+acc_valor + +lcd.val())
+        if (acc_op === "b_resta") {
+          lcd.val(+acc_valor - +lcd.val())
+        }
+
+        if (acc_op === "b_multiplica") {
+          lcd.val(+acc_valor * +lcd.val())
+        }
+
+        if (acc_op === "b_divide") {
+          lcd.val(+acc_valor / +lcd.val())
+        }
+
+        if (acc_op == "b_eleva") {
+          lcd.val(Math.pow(+acc_valor, +lcd.val()));
+        }
+        resetea_acumulado();
       }
-
-      if (acc_op === "b_resta") {
-        lcd.val(+acc_valor - +lcd.val())
-      }
-
-      if (acc_op === "b_multiplica") {
-        lcd.val(+acc_valor * +lcd.val())
-      }
-
-      if (acc_op === "b_divide") {
-        lcd.val(+acc_valor / +lcd.val())
-      }
-
-      if (acc_op == "b_eleva") {
-        lcd.val(Math.pow(+acc_valor, +lcd.val()));
-      }
-
-      resetea_acumulado();
     });
 
   /*Si pulsamos la tecla de un operador unitario, realizamos la función que 
@@ -109,32 +136,34 @@ $(function() {
       var lcd = $("#lcd");
       var operacion = $(this).attr('id');
       
-      // Elevar el número al cuadrado      
-      if (operacion === "b_cuadrado") {
-        lcd.val(lcd.val() * lcd.val());
-      }
+      if (comprueba_numero(lcd.val())) {
+        // Elevar el número al cuadrado      
+        if (operacion === "b_cuadrado") {
+          lcd.val(+lcd.val() * +lcd.val());
+        }
 
-      // Invertir el número
-      if (operacion === "b_invertido") {
-        lcd.val(1 / lcd.val());
-      }
+        // Invertir el número
+        if (operacion === "b_invertido") {
+          lcd.val(1 / +lcd.val());
+        }
 
-      // Raíz cuadrada del número
-      if (operacion === "b_raiz") {
-        lcd.val(Math.sqrt(lcd.val()));
-      }
+        // Raíz cuadrada del número
+        if (operacion === "b_raiz") {
+          lcd.val(Math.sqrt(+lcd.val()));
+        }
 
-      // Entero del número
-      if (operacion === "b_entero") {
-        if (lcd.val() > 0)
-          lcd.val(Math.floor(lcd.val()));
-        else
-          lcd.val(Math.ceil(lcd.val()));
-      }
+        // Entero del número
+        if (operacion === "b_entero") {
+          if (lcd.val() > 0)
+            lcd.val(Math.floor(+lcd.val()));
+          else
+            lcd.val(Math.ceil(+lcd.val()));
+        }
 
-      // Cambiar signo
-      if (operacion === "b_signo") {
-        lcd.val(-lcd.val());
+        // Cambiar signo
+        if (operacion === "b_signo") {
+          lcd.val(-lcd.val());
+        }
       }
     });
 
@@ -158,17 +187,20 @@ $(function() {
 
       if (operacion === "b_ms") {
         // almacena el contenido de lcd en memoria
-        mem_valor = lcd.val();
+        if (comprueba_numero(lcd.val()))
+          mem_valor = +lcd.val();
       }
 
       if (operacion === "b_mmas") {
         // suma el contenido del lcd a la memoria
-        mem_valor = mem_valor + +lcd.val();
+        if (comprueba_numero(lcd.val()))
+          mem_valor = mem_valor + +lcd.val();
       }
 
       if (operacion === "b_mmenos") {
         // resta el contenido del lcd de la memoria
-        mem_valor = mem_valor - +lcd.val();
+        if (comprueba_numero(lcd.val()))
+          mem_valor = mem_valor - +lcd.val();
       }
 
       // mostramos el contenido de la memoria
@@ -185,9 +217,21 @@ $(function() {
       var texto = $("#lcd").val();
       var operacion = $(this).attr('id');
 
-      // quitamos los espacios que hayan podido insertar
       var array = texto.split(",");
       var total = 0;
+
+      // comprobamos que todos los elementos del array
+      // sean númericos
+      var error = false;
+
+      $.each(array, function() {
+        if (!comprueba_numero(this)) {
+          error = true;
+          return false;
+        }
+      });
+
+      if (error) return false;
 
       // calculamos el total según la operación a procesar
       if (operacion === "b_sumatorio") {
@@ -196,7 +240,7 @@ $(function() {
         });
       }
       if (operacion === "b_producto") {
-		total = 1;
+		    total = 1;
         $.each(array, function(){
           total*=parseFloat(this) || 0;
         });
