@@ -1,0 +1,149 @@
+/* Basic reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+/* Finally adding some IE9 fallbacks for gradients to finish things up */
+
+/* A nice BG gradient */
+html {
+  background: radial-gradient(circle, #fff 20%, #ccc);
+  background-size: cover;
+}
+
+header {
+  text-align: center;
+  padding: 20px 0;
+}
+
+header h1 {
+  font-family: 'Share Tech Mono', 'Lucida Console', monaco, monospace;
+}
+
+header p {
+  font-size: 12px;
+
+}
+
+#calculadora {
+  width: 325px;
+  height: auto;
+  margin: 40px auto 0 auto;
+  padding: 20px 20px 20px 20px;
+  background: LightBlue;
+  border-radius: 3px;
+  box-shadow: 2px 2px Gray;
+  font-size: 14px;
+}
+
+input[type=number], [type=text] {
+  height: 40px;
+  width: 280px;
+  padding: 0 10px;
+  background: DarkGray;
+  border-radius: 5px;
+  font-family: 'Share Tech Mono', 'Lucida Console', monaco, monospace;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 40px;
+  color: Maroon ;
+  text-align: right;
+  letter-spacing: 1px;
+}
+
+/* Para ocultar las flechas arriba y abajo */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+}
+
+.teclado, .arriba {
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+button {
+  cursor: pointer;
+  width: 66px;
+  height: 40px;
+  border-radius: 5px;
+  margin: 0 5px 10px 0;
+  text-align: center;
+  user-select: none;
+}
+
+input:active,
+input:focus,
+button:active,
+button:focus {
+  background-image: none;
+  outline: 0;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.numero {
+  font-weight: bold;
+}
+
+#coma, #punto {
+  font-size: 1.5em;
+}
+
+.op_binario, .op_unitario{
+  background-color: LightSkyBlue;
+  color: Black;
+  font-size: 15px;
+}
+
+.op_varios {
+  background-color: LightYellow;
+  font-family: Cambria, Georgia, serif;  
+  font-size: 15px;
+}
+
+.op_memoria {
+  background-color: LightCyan;
+}
+
+.op_unitario span {
+  text-decoration: overline;
+}
+
+.resultado {
+  background: MediumSeaGreen;
+  color: Black;
+  font-size: 1.4em;
+}
+
+.borrar {
+  background: Maroon;
+  color: white;
+}
+
+.acumulador {
+  display: inline-block;
+  height: 20px;
+  line-height: 20px;
+  margin-right: 5px;
+  float: right;
+  color: Gray;
+}
+
+.memoria {
+  display: inline-block;
+  height: 20px;
+  line-height: 20px;
+  color: Gray;
+}
+
+.row {
+  display: flex; /* equal height of the children */
+}
+
+.col {
+  /*flex: 1; /* additionally, equal width */
+}
