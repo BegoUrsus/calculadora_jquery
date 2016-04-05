@@ -36,7 +36,7 @@ function muestra_buenos() {
     return true;
     // Si está vacío no lo damos como error, ya que 
     // se convertirá a cero
-  } else if  (valor === "Infinity") {
+  } else if  (valor === "Infinity" || valor === "-Infinity") {
     // Si es infinito no lo damos como error, ya que
     // se puede operar con números infinitos
     return true;
