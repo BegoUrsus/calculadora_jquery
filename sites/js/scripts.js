@@ -32,7 +32,11 @@ function muestra_buenos() {
 
  function comprueba_numero(valor) {
 
-  if (!$.isNumeric(valor)) {
+  if (valor === ""){
+    return true;
+  } else if  (!isFinite(valor)) {
+    return true;
+  } else if (!$.isNumeric(valor)) {
     $.jAlert({
       'title': '¡Error en datos!',
       'content': '"' + valor + '" no es un número correcto',
@@ -68,8 +72,15 @@ $(function() {
   Pero mantenemos el contenido de la memoria*/
    $(".borrar").on("click", 
     function(){ 
-      $("#lcd").val("");
-      resetea_acumulado();
+      var operacion = $(this).attr('id');
+      if (operacion === "borrar") {
+        $("#lcd").val("");
+        resetea_acumulado();
+        mem_valor = 0;
+        muestra_memoria();
+      } else if (operacion === "borrar_parcial") {
+        $("#lcd").val("");
+      }
    });
 
 
