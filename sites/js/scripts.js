@@ -31,6 +31,9 @@ function muestra_buenos() {
  }
 
  function error(titulo, mensaje) {
+    // Esta función es de la librería jAlert que muestra
+    // mensajes de alerta con más estilo que los que genera
+    // Más información en: http://flwebsites.biz/jAlert/
     $.jAlert({
       'title': titulo,
       'content': mensaje,
@@ -41,27 +44,27 @@ function muestra_buenos() {
     });
  }
 
+ /*Comprueba que el valor pasado como parámetro, sea un valor
+ numérico, un campo vacío o el valor infinito tanto positivo como
+ negativo*/
  function comprueba_numero(valor) {
-
-  if (valor === ""){
-    return true;
+  if (valor ==="" || valor === "Infinity" || valor === "-Infinity") {
     // Si está vacío no lo damos como error, ya que 
     // se convertirá a cero
-  } else if  (valor === "Infinity" || valor === "-Infinity") {
-    // Si es infinito no lo damos como error, ya que
+    // Si es infinito tampoco lo damos como error, ya que
     // se puede operar con números infinitos
     return true;
   } else if (!$.isNumeric(valor)) {
-    // Si es un valor NO numérico, informamos del error
+    // Si es un valor NO numérico, SI que es un error
     error(
       '¡Error en datos!',
       '"' + valor + '" no es un número correcto');
     return false;
-  } else  {
-    return true;
-  }
+  } 
+  return true;
  }
 
+/** Calcula el factorial de n.*/
 var f = [];
 function factorial (n) {
   if (n == 0 || n == 1)
@@ -102,58 +105,107 @@ $(function() {
       }
    });
 
+   /* Muestra los datos del acumulador */
+   function muestra_acumulado(valor, operador) {
+        $("#acumulado").html(valor);
+        if (operador === "b_suma")
+          $("#operacion").html("+");
+        else if (operador === "b_resta")
+          $("#operacion").html("-");
+        else if (operador === "b_multiplica")
+          $("#operacion").html("*");
+        else if (operador === "b_divide")
+          $("#operacion").html("&divide;");
+        else if (operador === "b_eleva")
+          $("#operacion").html("^");
+   }
 
-  /*Si pulsamos la tecla de un operador binario, almacenamos el valor
-  del display y el id de la tecla de operación, y mostramos dichos valores
-  en la parte superior. También borramos el contenido del lcd*/
+
+  /*Si pulsamos la tecla de un operador binario, 
+  primero miramos si había alguna operación pendiente en el
+  acumulador y la realizamos. 
+  A continuación, actualizamos los acumuladores
+  con el nuevo valor del display y el id de la tecla de operación, 
+  y mostramos dichos valores en la parte superior. 
+  Por último borramos el contenido del lcd*/
   $(".op_binario").on("click", 
     function() {
       var lcd = $("#lcd");
-      var operacion = $(this).attr('id');
-      if (comprueba_numero(lcd.val())) {
-        acc_valor = +lcd.val();
-        acc_op = operacion;
-        $("#acumulado").html(acc_valor);
-        if (acc_op === "b_suma")
-          $("#operacion").html("+");
-        if (acc_op === "b_resta")
-          $("#operacion").html("-");
-        if (acc_op === "b_multiplica")
-          $("#operacion").html("*");
-        if (acc_op === "b_divide")
-          $("#operacion").html("/");
-        if (acc_op === "b_eleva")
-          $("#operacion").html("^");
-        lcd.val("");
+      // almacenamos temporalmente los acumuladores existentes
+      var temp_acc_valor = acc_valor;
+      var temp_acc_op = acc_op;
+
+      // cogemos los nuevos datos
+      var new_valor = lcd.val();
+      var new_op = $(this).attr('id');
+
+      // Primero comprobamos que el valor del LCD sea un número correcto.
+      // De lo contrario abandonamos la operación
+
+      if (!comprueba_numero(new_valor)) 
+        return;
+      
+      // Si había alguna operación almacenada en el acumulador,
+      // procesamos dicha operación, actualizamos el acumulador
+      // con dicho resultado y el operador actual, y reseteamos el
+      // lcd;
+
+      if (temp_acc_op !== "") {
+        // Si había alguna operación almacenada en el acumulador,
+        // procesamos dicha operación, actualizamos el acumulador
+        // con dicho resultado y el operador actual, y reseteamos el
+        // lcd;
+
+        var resultado = calculo_binario(+new_valor, temp_acc_valor, temp_acc_op);
+        acc_valor = resultado;
+        acc_op = new_op;
+      } else {
+        // Si no había ninguna operación pendiente, realizamos
+        // actualizamos el acumulador con el valor del lcd y la operacion
+        // actual
+
+        acc_valor = +new_valor;
+        acc_op = new_op;
+
       }
+      // Mostramos el nuevo acumulador y reseteamos el display
+      muestra_acumulado(acc_valor, acc_op);
+      lcd.val("");
+
+      
     });
 
-  /*Si pulsamos una tecla de calcular, realizamos la función que le corresponda
-  según el operador y el valor acumulado que habíamos almacenado con las
-  teclas de operación binarias. Resteamos lo acumulado*/
+  /* Devuelve el resultador de la operación binaria realizada
+  con los 2 valores y el operador pasados como parámetros */
+  function calculo_binario(dato_nuevo, dato_antiguo, operador) {
+        if (operador === "b_suma") {
+          return (+dato_antiguo + dato_nuevo)
+        } else if (operador === "b_resta") {
+          return (+dato_antiguo - dato_nuevo)
+        } else if (operador === "b_multiplica") {
+          return (+dato_antiguo * dato_nuevo)
+        } else if (operador === "b_divide") {
+          return (+dato_antiguo / dato_nuevo)
+        } else if (operador == "b_eleva") {
+          return (Math.pow(+dato_antiguo, dato_nuevo));
+        } else {
+          // Si no es ninguno de los operadores
+          // simplemente devolvemos el dato_nuevo, para que no cambie
+          // el valor del LCD
+          return dato_nuevo;
+        }
+  }
+
+  /*Si pulsamos una tecla de calcular, realizamos la función de cálculo binario,
+  pasándole como parámetros el valor del lcd y el valor y operador almacenados en 
+  el acumulador.
+  A continuación, reseteamos los acumuladores*/
   $(".calcular").on("click", 
     function() {
       var lcd = $("#lcd");
       if (comprueba_numero(lcd.val())) {
-        if (acc_op === "b_suma") {
-          lcd.val(+acc_valor + +lcd.val())
-        }
-
-        if (acc_op === "b_resta") {
-          lcd.val(+acc_valor - +lcd.val())
-        }
-
-        if (acc_op === "b_multiplica") {
-          lcd.val(+acc_valor * +lcd.val())
-        }
-
-        if (acc_op === "b_divide") {
-          lcd.val(+acc_valor / +lcd.val())
-        }
-
-        if (acc_op == "b_eleva") {
-          lcd.val(Math.pow(+acc_valor, +lcd.val()));
-        }
+        var resultado = calculo_binario(+lcd.val(), +acc_valor, acc_op);
+        lcd.val(resultado);
         resetea_acumulado();
       }
     });
