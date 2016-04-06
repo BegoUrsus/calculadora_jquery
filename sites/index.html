@@ -87,12 +87,17 @@
         </div><!--row-->
 
         <div class="row">
+          <button class="op_unitario" id="b_potencia2" title="Potencia n del número 2"> 2<sup>n</sup> </button>
+          <button class="op_unitario" id="b_factorial" title="Factorial del número n: n*(n-1)*(n-2)*...*3*2*1"> n! </button>
           <button class="numero" id="coma" title="Separador de números">,</button>
           <button class="op_varios" id="b_sumatorio" title="Sumatorio de varios números separados por comas"> &sum;</button>
           <button class="op_varios" id="b_producto" title="Producto de varios números separados por comas"> &prod;</button>
-          <button class="borrar" id="borrar" title="Inicializar calculadora">C</button>
-          <button class="borrar" id="borrar_parcial" title="Borrar el valor actual">CE</button>
         </div><!--row-->
+
+        <div class="lastrow">
+          <button class="borrar" id="borrar" title="Resetea la calculadora (el valor actual, la memoria y el acumulador)">C</button>
+          <button class="borrar" id="borrar_parcial" title="Resetea únicamente el valor actual">CE</button>
+        </div><!--lastrow-->
 
       </div><!--teclado-->
     </div><!--calculadora-->

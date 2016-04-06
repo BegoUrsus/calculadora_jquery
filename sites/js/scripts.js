@@ -30,6 +30,17 @@ function muestra_buenos() {
   $("#buenos").html(msj);
  }
 
+ function error(titulo, mensaje) {
+    $.jAlert({
+      'title': titulo,
+      'content': mensaje,
+      'theme': 'default',
+      'showAnimation': 'false',
+      'hideAnimation': 'false',
+      'btns': { 'text': 'Aceptar' }
+    });
+ }
+
  function comprueba_numero(valor) {
 
   if (valor === ""){
@@ -42,20 +53,23 @@ function muestra_buenos() {
     return true;
   } else if (!$.isNumeric(valor)) {
     // Si es un valor NO numérico, informamos del error
-    $.jAlert({
-      'title': '¡Error en datos!',
-      'content': '"' + valor + '" no es un número correcto',
-      'theme': 'default',
-      'showAnimation': 'false',
-      'hideAnimation': 'false',
-      'btns': { 'text': 'Aceptar' }
-    });
+    error(
+      '¡Error en datos!',
+      '"' + valor + '" no es un número correcto');
     return false;
   } else  {
     return true;
   }
  }
 
+var f = [];
+function factorial (n) {
+  if (n == 0 || n == 1)
+    return 1;
+  if (f[n] > 0)
+    return f[n];
+  return f[n] = factorial(n-1) * n;
+}
 
 $(function() {
 
@@ -180,6 +194,31 @@ $(function() {
         if (operacion === "b_signo") {
           lcd.val(-lcd.val());
         }
+
+        // Potencia de 2
+        if (operacion === "b_potencia2") {
+          lcd.val(Math.pow(2, +lcd.val()));
+        }
+
+        // Factorial
+        if (operacion === "b_factorial") {
+          // Para calcular el factorial debemos comprobar que es un número entero positivo
+          if (+lcd.val()<0) {
+            error(
+              "¡Error!",
+              "El número ha de ser mayor o igual que cero para calcular el factorial");
+          } else if (+lcd.val() % 1 !== 0) { 
+            error(
+              "¡Error!",
+              "El número ha de ser entero para calcular el factorial");
+          } else if (+lcd.val() > 170) { 
+            error(
+              "¡Error!",
+              "Número fuera de límites para calcular el factorial. Máximo valor admitido: 170");
+          } else {
+            lcd.val(factorial(+lcd.val()));
+          }
+        }
       }
     });
 
@@ -256,7 +295,7 @@ $(function() {
         });
       }
       if (operacion === "b_producto") {
-		    total = 1;
+        total = 1;
         $.each(array, function(){
           total*=parseFloat(this) || 0;
         });
