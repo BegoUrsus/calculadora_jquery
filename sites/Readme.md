@@ -2,7 +2,7 @@
 
 Calculadora realizada utilizando HTML5, CSS3 y jQuery.
 
-![alt tag](../images/captura01.png)
+[![alt tag](../images/captura01.png)](http://begoursus.github.io/calculadora_jquery/sites/)
 
 ### Version
 1.0.0
